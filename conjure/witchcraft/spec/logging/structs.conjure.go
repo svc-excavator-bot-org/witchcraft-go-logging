@@ -5,7 +5,8 @@ package logging
 import (
 	"encoding/json"
 
-	"github.com/palantir/conjure-go/conjure/types/conjuretype"
+	"github.com/palantir/pkg/datetime"
+	"github.com/palantir/pkg/safelong"
 )
 
 // Wraps a log entry with entity information.
@@ -25,7 +26,7 @@ type ServiceLogV1 struct {
 	// The logger output level. One of {FATAL,ERROR,WARN,INFO,DEBUG,TRACE}.
 	Level LogLevel `json:"level" yaml:"level,omitempty" conjure-docs:"The logger output level. One of {FATAL,ERROR,WARN,INFO,DEBUG,TRACE}."`
 	// RFC3339Nano UTC datetime string when the log event was emitted
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty" conjure-docs:"RFC3339Nano UTC datetime string when the log event was emitted"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty" conjure-docs:"RFC3339Nano UTC datetime string when the log event was emitted"`
 	// Class or file name. May include line number.
 	Origin *string `json:"origin" yaml:"origin,omitempty" conjure-docs:"Class or file name. May include line number."`
 	// Thread name
@@ -118,8 +119,8 @@ func (o *ServiceLogV1) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // Definition of the request.2 format.
 type RequestLogV2 struct {
-	Type string               `json:"type" yaml:"type,omitempty"`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// HTTP method of request
 	Method *string `json:"method" yaml:"method,omitempty" conjure-docs:"HTTP method of request\n"`
 	// Protocol, e.g. `HTTP/1.1`, `HTTP/2`
@@ -131,11 +132,11 @@ type RequestLogV2 struct {
 	// HTTP status code of response
 	Status int `json:"status" yaml:"status,omitempty" conjure-docs:"HTTP status code of response\n"`
 	// Size of request (bytes)
-	RequestSize conjuretype.SafeLong `json:"requestSize" yaml:"requestSize,omitempty" conjure-docs:"Size of request (bytes)\n"`
+	RequestSize safelong.SafeLong `json:"requestSize" yaml:"requestSize,omitempty" conjure-docs:"Size of request (bytes)\n"`
 	// Size of response (bytes)
-	ResponseSize conjuretype.SafeLong `json:"responseSize" yaml:"responseSize,omitempty" conjure-docs:"Size of response (bytes)\n"`
+	ResponseSize safelong.SafeLong `json:"responseSize" yaml:"responseSize,omitempty" conjure-docs:"Size of response (bytes)\n"`
 	// Amount of time spent handling request (microseconds)
-	Duration conjuretype.SafeLong `json:"duration" yaml:"duration,omitempty" conjure-docs:"Amount of time spent handling request (microseconds)\n"`
+	Duration safelong.SafeLong `json:"duration" yaml:"duration,omitempty" conjure-docs:"Amount of time spent handling request (microseconds)\n"`
 	// User id (if available)
 	Uid *UserId `json:"uid" yaml:"uid,omitempty" conjure-docs:"User id (if available)\n"`
 	// Session id (if available)
@@ -204,8 +205,8 @@ func (o *RequestLogV2) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // Definition of the request.1 format.
 type RequestLogV1 struct {
-	Type string               `json:"type" yaml:"type,omitempty"`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// HTTP method of request
 	Method *string `json:"method" yaml:"method,omitempty" conjure-docs:"HTTP method of request\n"`
 	// Protocol, e.g. `HTTP/1.1`, `HTTP/2`
@@ -333,7 +334,7 @@ func (o *RequestLogV1) UnmarshalYAML(unmarshal func(interface{}) error) error {
 // Definition of the trace.1 format.
 type TraceLogV1 struct {
 	Type         string                 `json:"type" yaml:"type,omitempty"`
-	Time         conjuretype.DateTime   `json:"time" yaml:"time,omitempty"`
+	Time         datetime.DateTime      `json:"time" yaml:"time,omitempty"`
 	Uid          *UserId                `json:"uid" yaml:"uid,omitempty"`
 	Sid          *SessionId             `json:"sid" yaml:"sid,omitempty"`
 	TokenId      *TokenId               `json:"tokenId" yaml:"tokenId,omitempty"`
@@ -394,10 +395,10 @@ type Span struct {
 	// 16-digit hex identifer of the parent span
 	ParentId *string `json:"parentId" yaml:"parentId,omitempty" conjure-docs:"16-digit hex identifer of the parent span\n"`
 	// Timestamp of the start of this span (epoch microsecond value)
-	Timestamp conjuretype.SafeLong `json:"timestamp" yaml:"timestamp,omitempty" conjure-docs:"Timestamp of the start of this span (epoch microsecond value)\n"`
+	Timestamp safelong.SafeLong `json:"timestamp" yaml:"timestamp,omitempty" conjure-docs:"Timestamp of the start of this span (epoch microsecond value)\n"`
 	// Duration of this span (microseconds)
-	Duration    conjuretype.SafeLong `json:"duration" yaml:"duration,omitempty" conjure-docs:"Duration of this span (microseconds)\n"`
-	Annotations []Annotation         `json:"annotations" yaml:"annotations,omitempty"`
+	Duration    safelong.SafeLong `json:"duration" yaml:"duration,omitempty" conjure-docs:"Duration of this span (microseconds)\n"`
+	Annotations []Annotation      `json:"annotations" yaml:"annotations,omitempty"`
 }
 
 func (o Span) MarshalJSON() ([]byte, error) {
@@ -445,7 +446,7 @@ func (o *Span) UnmarshalYAML(unmarshal func(interface{}) error) error {
 // A Zipkin-compatible Annotation object.
 type Annotation struct {
 	// Time annotation was created (epoch microsecond value)
-	Timestamp conjuretype.SafeLong `json:"timestamp" yaml:"timestamp,omitempty" conjure-docs:"Time annotation was created (epoch microsecond value)\n"`
+	Timestamp safelong.SafeLong `json:"timestamp" yaml:"timestamp,omitempty" conjure-docs:"Time annotation was created (epoch microsecond value)\n"`
 	// Value encapsulated by this annotation
 	Value    string   `json:"value" yaml:"value,omitempty" conjure-docs:"Value encapsulated by this annotation\n"`
 	Endpoint Endpoint `json:"endpoint" yaml:"endpoint,omitempty"`
@@ -462,8 +463,8 @@ type Endpoint struct {
 
 // Definition of the event.1 format.
 type EventLogV1 struct {
-	Type string               `json:"type" yaml:"type,omitempty"`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// Dot-delimited name of event, e.g. `com.foundry.compass.api.Compass.http.ping.failures`
 	EventName string `json:"eventName" yaml:"eventName,omitempty" conjure-docs:"Dot-delimited name of event, e.g. \"com.foundry.compass.api.Compass.http.ping.failures\"\n"`
 	// Type of event being represented, e.g. `gauge`, `histogram`, `counter`
@@ -536,8 +537,8 @@ func (o *EventLogV1) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // Definition of the event.2 format.
 type EventLogV2 struct {
-	Type string               `json:"type" yaml:"type,omitempty"`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// Dot-delimited name of event, e.g. `com.foundry.compass.api.Compass.http.ping.failures`
 	EventName string `json:"eventName" yaml:"eventName,omitempty" conjure-docs:"Dot-delimited name of event, e.g. \"com.foundry.compass.api.Compass.http.ping.failures\"\n"`
 	// Observations, measurements and context associated with the event
@@ -624,8 +625,8 @@ func (o *EventLogV2) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // Definition of the metric.1 format.
 type MetricLogV1 struct {
-	Type string               `json:"type" yaml:"type,omitempty"`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// Dot-delimited name of metric, e.g. `com.foundry.compass.api.Compass.http.ping.failures`
 	MetricName string `json:"metricName" yaml:"metricName,omitempty" conjure-docs:"Dot-delimited name of metric, e.g. \"com.foundry.compass.api.Compass.http.ping.failures\"\n"`
 	// Type of metric being represented, e.g. `gauge`, `histogram`, `counter`
@@ -712,8 +713,8 @@ func (o *MetricLogV1) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // Definition of the beacon.1 format.
 type BeaconLogV1 struct {
-	Type string               `json:"type" yaml:"type,omitempty"`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty"`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// Dot-delimited name for the structure of the params block, e.g. `compass.SearchEvent.v1`
 	EventType string `json:"eventType" yaml:"eventType,omitempty" conjure-docs:"Dot-delimited name for the structure of the params block, e.g. \"compass.SearchEvent.v1\"\n"`
 	// Name of the application that created the log
@@ -791,8 +792,8 @@ func (o *BeaconLogV1) UnmarshalYAML(unmarshal func(interface{}) error) error {
 // Definition of the audit.2 format.
 type AuditLogV2 struct {
 	// "audit.2"
-	Type string               `json:"type" yaml:"type,omitempty" conjure-docs:"\"audit.2\""`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty" conjure-docs:"\"audit.2\""`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// User id (if available). This is the most downstream caller.
 	Uid *UserId `json:"uid" yaml:"uid,omitempty" conjure-docs:"User id (if available). This is the most downstream caller.\n"`
 	// Session id (if available)
@@ -885,8 +886,8 @@ func (o *AuditLogV2) UnmarshalYAML(unmarshal func(interface{}) error) error {
 // Definition of the diagnostic.1 format.
 type DiagnosticLogV1 struct {
 	// "diagnostic.1"
-	Type string               `json:"type" yaml:"type,omitempty" conjure-docs:"\"diagnostic.1\""`
-	Time conjuretype.DateTime `json:"time" yaml:"time,omitempty"`
+	Type string            `json:"type" yaml:"type,omitempty" conjure-docs:"\"diagnostic.1\""`
+	Time datetime.DateTime `json:"time" yaml:"time,omitempty"`
 	// The diagnostic being logged.
 	Diagnostic Diagnostic `json:"diagnostic" yaml:"diagnostic,omitempty" conjure-docs:"The diagnostic being logged."`
 	// Unredacted parameters
@@ -991,7 +992,7 @@ func (o *ThreadDumpV1) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 type ThreadInfoV1 struct {
 	// The ID of the thread.
-	Id *conjuretype.SafeLong `json:"id" yaml:"id,omitempty" conjure-docs:"The ID of the thread."`
+	Id *safelong.SafeLong `json:"id" yaml:"id,omitempty" conjure-docs:"The ID of the thread."`
 	// The name of the thread. Note that thread names may include unsafe information such as the path of the HTTP request being processed. It must be safely redacted.
 	Name *string `json:"name" yaml:"name,omitempty" conjure-docs:"The name of the thread. Note that thread names may include unsafe information such as the path of the HTTP request being processed. It must be safely redacted.\n"`
 	// A list of stack frames for the thread, ordered with the current frame first.

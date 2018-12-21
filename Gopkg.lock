@@ -48,15 +48,17 @@
   version = "2.0.0"
 
 [[projects]]
-  digest = "1:5ccab57e70f32fb9ef9a3a9938677e367852f06f699901f8dc00e3de433e2c46"
+  digest = "1:fb1f116dd6e0eeaa2e32b4fd20f26977be79664965e9e19597a973cab7d0820b"
   name = "github.com/palantir/pkg"
   packages = [
+    "datetime",
     "objmatcher",
     "safejson",
+    "safelong",
   ]
   pruneopts = "UT"
-  revision = "163672def8acf3f206ea4bed25dcfa57aecd0b59"
-  version = "0.7.0"
+  revision = "f026ea95cf70be60a1530c31c266ec3097e75d75"
+  version = "0.9.1"
 
 [[projects]]
   branch = "develop"
@@ -165,8 +167,10 @@
     "github.com/golang/glog",
     "github.com/nmiyake/pkg/dirs",
     "github.com/palantir/conjure-go/conjure/types/conjuretype",
+    "github.com/palantir/pkg/datetime",
     "github.com/palantir/pkg/objmatcher",
     "github.com/palantir/pkg/safejson",
+    "github.com/palantir/pkg/safelong",
     "github.com/palantir/witchcraft-go-error",
     "github.com/palantir/witchcraft-go-params",
     "github.com/palantir/witchcraft-go-tracing/wtracing",
